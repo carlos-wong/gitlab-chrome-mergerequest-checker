@@ -163,9 +163,15 @@ function AcceptMR(){
             acceptBtn.setAttribute("disabled", "disabled");
           }
           else if(assign === config.assign){
-            acceptBtn.innerHTML = "Check pass Merging";
-            mergeBtnInstance.removeAttribute("disabled", "enabled");
-            mergeBtnInstance.click();
+            if(curCommits.commits.length >= 50){
+              acceptBtn.innerHTML = "This MR include over 50 commits,Reject it!";
+            }
+            else{
+              acceptBtn.innerHTML = "Check pass Merging";
+              mergeBtnInstance.removeAttribute("disabled", "enabled");
+              mergeBtnInstance.click();
+            }
+
           }
           else{
             acceptBtn.innerHTML = "This MR is not assignee to you";
