@@ -95,9 +95,9 @@ function GitlabMrsCommits(mrs,history,callback){
     gitlab_axios_instance
       .get('/projects/'+ mr.project_id+'/merge_requests/'+ mr.iid +'/commits?per_page=100&page=1')
       .then((ret)=>{
-        history[history.length] = lodash.map(ret.data,(data)=>{
+        history[history.length] = {id:mr.iid,commits:lodash.map(ret.data,(data)=>{
           return data.id;
-        });
+        })};
         GitlabMrsCommits(lodash.slice(mrs,1),history,callback);})
       .catch((error)=>{
         callback(error,null);
@@ -118,15 +118,25 @@ function AcceptMR(){
       //filter cur mr
       let mrs = lodash.filter(data,(data)=>{
         console.log(data.iid," ",urlInfo.mr);
-        return (''+data.iid) !== urlInfo.mr;
+        // return (''+data.iid) !== urlInfo.mr;
+        return true;
       });
       console.log('mrs is:',mrs);
       GitlabMrsCommits(mrs,[],(error,commits)=>{
         console.log('error is:',error);
         if(!error){
           console.log('commits is:',commits);
+          let curCommits = lodash.filter(commits,(data)=>{
+            return data.id == urlInfo.mr;
+          });
+          let otherCommits = lodash.filter(commits,(data)=>{
+            return data.id != urlInfo.mr;
+          });
+          console.log('cur commits:',curCommits);
+          console.log('other commits:',otherCommits);
         }
-      })
+      });
+
     }
   });
 }
