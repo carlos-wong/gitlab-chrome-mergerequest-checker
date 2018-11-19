@@ -128,12 +128,23 @@ function AcceptMR(){
           console.log('commits is:',commits);
           let curCommits = lodash.filter(commits,(data)=>{
             return data.id == urlInfo.mr;
-          });
+          })[0];
           let otherCommits = lodash.filter(commits,(data)=>{
             return data.id != urlInfo.mr;
           });
           console.log('cur commits:',curCommits);
           console.log('other commits:',otherCommits);
+          console.log('',lodash.filter(otherCommits,(commits)=>{
+            console.log('commits is:',commits," curcommits:",curCommits);
+            let matched = false;
+            lodash.map(curCommits.commits,(commit)=>{
+              console.log('commits.commits:',commits.commits,' commit is:',commit);
+              if(lodash.includes(commits.commits,commit)){
+                matched = true;
+              }
+            });
+            return matched;
+          }));
         }
       });
 
