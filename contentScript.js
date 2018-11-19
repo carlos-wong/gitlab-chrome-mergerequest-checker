@@ -12,6 +12,7 @@ window.addEventListener ("load", myMain, false);
 
 var mergeBtn;
 var acceptBtn;
+let mergeBtnInstance;
 
 function myMain () {
   let removeSourceBranch = document.evaluate (
@@ -39,7 +40,7 @@ function myMain () {
   );
 
   if (mergeBtn && mergeSpan && removeSourceBranch){
-    let mergeBtnInstance = mergeBtn.snapshotItem(0);
+    mergeBtnInstance = mergeBtn.snapshotItem(0);
     let mergeSpanInstance = mergeSpan.snapshotItem(0);
     let removeSourceBranchInstance = removeSourceBranch.snapshotItem(0);
     if (!mergeBtnInstance || !mergeSpanInstance || !removeSourceBranchInstance){
@@ -53,7 +54,6 @@ function myMain () {
     acceptBtn.className = mergeBtnInstance.className;
     var textnode = document.createTextNode("Accept");  // Create a text node
     acceptBtn.addEventListener('click', function() {
-      console.log('comment button is click');
       AcceptMR();
     });
     acceptBtn.appendChild(textnode);
@@ -67,7 +67,6 @@ function myMain () {
 function GitlabParseURLInfo(url){
   let projectInfo = {};
   [projectInfo.groupname,projectInfo.projectname,projectInfo.type,projectInfo.mr] =  lodash.split(lodash.split(url,"http://www.lejuhub.com/")[1],'/');
-  console.log('projectInfo:',lodash.split(lodash.split(url,"http://www.lejuhub.com/")[1],'/'));
   projectInfo.project = projectInfo.groupname + '/' + projectInfo.projectname;
   return projectInfo;
 }
@@ -88,7 +87,6 @@ function QueryProjectMrs(page,per_page,project,history,callback){
       }
     })
     .catch((err)=>{
-      console.log('dump request error is:',err);
       callback(err,null);
     });
 }
@@ -112,8 +110,17 @@ function GitlabMrsCommits(mrs,history,callback){
   }
 }
 
+function GitlabGetCurUrlAssign(curUrl,mrs){
+  return lodash.filter(mrs,(mr)=>{
+    if(mr.iid+'' === curUrl.mr){
+      return true;
+    }
+    return false;
+  });
+}
+
 function AcceptMR(){
-  acceptBtn.innerHTML = "Merging";
+  acceptBtn.innerHTML = "Checking";
   acceptBtn.setAttribute("disabled", "disabled");
   let curURL = document.URL;
   let urlInfo = GitlabParseURLInfo(curURL);
@@ -121,6 +128,9 @@ function AcceptMR(){
   QueryProjectMrs(1,100,urlInfo.project,[],(error,data)=>{
     console.log('error:',error,' data is:',data);
     if(!error){
+      let assign = GitlabGetCurUrlAssign(urlInfo,data)[0].assignee;
+      assign = assign && assign.username;
+      console.log('assign is:',assign);
       GitlabMrsCommits(data,[],(error,commits)=>{
         console.log('error is:',error);
         if(!error){
@@ -132,7 +142,6 @@ function AcceptMR(){
           });
           let crossMRs = lodash.filter(otherCommits,(commits)=>{
             let matched = false;
-            console.log('cur commits is:',curCommits);
             lodash.map(curCommits.commits,(commit)=>{
               if(lodash.includes(commits.commits,commit)){
                 matched = true;
@@ -152,6 +161,14 @@ function AcceptMR(){
           if(foundOldCrossMr){
             acceptBtn.innerHTML = "Found crossed MR Can't Merge";
             acceptBtn.setAttribute("disabled", "disabled");
+          }
+          else if(assign === config.assign){
+            acceptBtn.innerHTML = "Check pass Merging";
+            mergeBtnInstance.removeAttribute("disabled", "enabled");
+            mergeBtnInstance.click();
+          }
+          else{
+            acceptBtn.innerHTML = "This MR is not assignee to you";
           }
         }
       });
