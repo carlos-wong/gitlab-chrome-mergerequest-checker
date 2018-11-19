@@ -2,6 +2,8 @@ var config = require('./config');
 var axios = require('axios');
 var lodash = require('lodash');
 
+console.log('extension loaded');
+
 var gitlab_axios_instance = axios.create({
   baseURL: config.api_url,
   timeout: 10000,
@@ -15,34 +17,15 @@ var acceptBtn;
 let mergeBtnInstance;
 
 function myMain () {
-  let removeSourceBranch = document.evaluate (
-    '// *[@id="remove-source-branch-input"]',
-    document,
-    null,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
-  );
-
-  mergeBtn = document.evaluate (
-    '//*[@id="content-body"]/div/div[2]/div[3]/div[2]/div[1]/div/div[2]/div/span/button[1]',
-    document,
-    null,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
-  );
+  let removeSourceBranch = document.querySelector('#remove-source-branch-input');
+  mergeBtn = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span > button");
   let mergeSpan;
-  mergeSpan = document.evaluate (
-    '//*[@id="content-body"]/div/div[2]/div[3]/div[2]/div[1]/div/div[2]/div/span',
-    document,
-    null,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
-  );
-
+  mergeSpan = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span");
+  console.log('mergeBtn:',mergeBtn,' mergeSpan:',mergeSpan,' removeSourceBranch:',removeSourceBranch);
   if (mergeBtn && mergeSpan && removeSourceBranch){
-    mergeBtnInstance = mergeBtn.snapshotItem(0);
-    let mergeSpanInstance = mergeSpan.snapshotItem(0);
-    let removeSourceBranchInstance = removeSourceBranch.snapshotItem(0);
+    mergeBtnInstance = mergeBtn;
+    let mergeSpanInstance = mergeSpan;
+    let removeSourceBranchInstance = removeSourceBranch;
     if (!mergeBtnInstance || !mergeSpanInstance || !removeSourceBranchInstance){
       return;
     }
