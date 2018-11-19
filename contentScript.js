@@ -43,7 +43,7 @@ function myMain () {
     }
     removeSourceBranchInstance.checked = true;
 
-    console.log('dump mergeBtnInstance is:',mergeBtnInstance.className);
+    console.log('Dump mergeBtnInstance is:',mergeBtnInstance.className);
     mergeBtnInstance.innerHTML = "";
     mergeBtnInstance.setAttribute("disabled", "disabled");
     // mergeBtnInstance.removeEventListener("click");
@@ -60,7 +60,6 @@ function myMain () {
     newItem.appendChild(textnode);
     // document.insertBefore(newItem, mergeBtnInstance.childNodes[0]);  // Insert <li> before the first child of <ul>
     mergeSpanInstance.appendChild(newItem);
-
 
 
     // mergeBtnInstance.href = 'http://www.baidu.com';
