@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --mode=development --watch"
-
   },
   "repository": {
     "type": "git",
@@ -21,5 +20,9 @@
   "devDependencies": {
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "lodash": "^4.17.11"
   }
 }
