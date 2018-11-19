@@ -143,12 +143,18 @@ function AcceptMR(){
               acceptBtn.innerHTML = "This MR include over 50 commits,Reject it!";
             }
             else{
-              acceptBtn.innerHTML = "Check pass Merging";
-              mergeBtn.removeAttribute("disabled", "enabled");
-              removeSourceBranch.checked = true;
-              setTimeout(()=>{
-               mergeBtn.click();
-              }, 1600);
+              acceptBtn.innerHTML = "Check pass, Merging";
+              gitlab_axios_instance
+                .put('/projects/'+encodeURIComponent(urlInfo.project)+'/merge_requests/'+ urlInfo.mr +'/merge?should_remove_source_branch=true',{
+                  should_remove_source_branch:true
+                })
+                .then(()=>{
+                  acceptBtn.innerHTML = 'Merged';
+                  window.location.reload();
+                })
+                .catch((error)=>{
+                  acceptBtn.innerHTML = error;
+                });
             }
 
           }
