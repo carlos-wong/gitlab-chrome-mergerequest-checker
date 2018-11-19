@@ -1,4 +1,4 @@
-console.log('merge Checker loaded');
+// var config = require('./config');
 
 window.addEventListener ("load", myMain, false);
 
