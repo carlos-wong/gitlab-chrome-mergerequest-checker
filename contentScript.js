@@ -14,34 +14,27 @@ window.addEventListener ("load", myMain, false);
 
 var mergeBtn;
 var acceptBtn;
-let mergeBtnInstance;
-
+let removeSourceBranch ;
 function myMain () {
-  let removeSourceBranch = document.querySelector('#remove-source-branch-input');
+  removeSourceBranch = document.querySelector('#remove-source-branch-input');
   mergeBtn = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span > button");
   let mergeSpan;
   mergeSpan = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span");
   console.log('mergeBtn:',mergeBtn,' mergeSpan:',mergeSpan,' removeSourceBranch:',removeSourceBranch);
   if (mergeBtn && mergeSpan && removeSourceBranch){
-    mergeBtnInstance = mergeBtn;
-    let mergeSpanInstance = mergeSpan;
-    let removeSourceBranchInstance = removeSourceBranch;
-    if (!mergeBtnInstance || !mergeSpanInstance || !removeSourceBranchInstance){
-      return;
-    }
-    removeSourceBranchInstance.checked = true;
+    removeSourceBranch.checked = true;
 
-    mergeBtnInstance.innerHTML = "";
-    mergeBtnInstance.setAttribute("disabled", "disabled");
+    mergeBtn.innerHTML = "";
+    mergeBtn.setAttribute("disabled", "disabled");
     acceptBtn = document.createElement("Button");       // Create a <li> node
-    acceptBtn.className = mergeBtnInstance.className;
+    acceptBtn.className = mergeBtn.className;
     var textnode = document.createTextNode("Accept");  // Create a text node
     acceptBtn.addEventListener('click', function() {
       AcceptMR();
     });
     acceptBtn.appendChild(textnode);
-    // document.insertBefore(acceptBtn, mergeBtnInstance.childNodes[0]);  // Insert <li> before the first child of <ul>
-    mergeSpanInstance.appendChild(acceptBtn);
+    // document.insertBefore(acceptBtn, mergeBtn.childNodes[0]);  // Insert <li> before the first child of <ul>
+    mergeSpan.appendChild(acceptBtn);
 
     
   }
@@ -151,8 +144,11 @@ function AcceptMR(){
             }
             else{
               acceptBtn.innerHTML = "Check pass Merging";
-              mergeBtnInstance.removeAttribute("disabled", "enabled");
-              mergeBtnInstance.click();
+              mergeBtn.removeAttribute("disabled", "enabled");
+              removeSourceBranch.checked = true;
+              setTimeout(()=>{
+               mergeBtn.click();
+              }, 1600);
             }
 
           }
