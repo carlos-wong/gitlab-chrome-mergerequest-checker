@@ -126,7 +126,7 @@ function GitlabMrsCommits(mrs,history,callback){
 
 function GitlabGetCurUrlAssign(curUrl,mrs){
   return lodash.filter(mrs,(mr)=>{
-    if(mr.iid+'' === curUrl.mr){
+    if(parseInt(mr.iid) === parseInt(curUrl.mr)){
       return true;
     }
     return false;
