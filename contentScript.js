@@ -41,7 +41,14 @@ function myMain () {
     acceptBtn.appendChild(textnode);
     // document.insertBefore(acceptBtn, mergeBtn.childNodes[0]);  // Insert <li> before the first child of <ul>
     mergeSpan.appendChild(acceptBtn);
-    InitPassBtn();
+    let curURL = document.URL;
+    let urlInfo = GitlabParseURLInfo(curURL);
+    gitlab.QueryProjectMr(urlInfo.project,urlInfo.mr,(data)=>{
+      let assigneeUsername = data.assignee && data.assignee.username;
+      if(assigneeUsername === 'product_commitee_bot' || assigneeUsername === "carlos_dev_trace_bot"){
+        InitPassBtn();
+      }
+    });
   }
   
 }
@@ -49,14 +56,10 @@ function myMain () {
 function HandlePassClick(){
   let curURL = document.URL;
   let urlInfo = GitlabParseURLInfo(curURL);
-  console.log('dump gitlab is:',gitlab);
   gitlab.QueryProjectMr(urlInfo.project,urlInfo.mr,(data)=>{
-    console.log('dump merge request data:',data);
     let assigneeUsername = data.assignee && data.assignee.username;
-    console.log('assigneeUsername:',assigneeUsername);
     if(assigneeUsername === 'product_commitee_bot' || assigneeUsername === "carlos_dev_trace_bot"){
       gitlab.GitlabCommentMr(urlInfo.project,urlInfo.mr,"#pass @"+assigneeUsername,(data)=>{console.log('data is:',data);});
-      // gitlab.GitlabCommentissue(urlInfo.project,"67","hicarlos 123",(data)=>{console.log(data);});
     }
   });
 }
