@@ -1,6 +1,7 @@
 var config = require('./config');
 var axios = require('axios');
 var lodash = require('lodash');
+var gitlab = require('./gitlab');
 
 console.log('extension loaded');
 
@@ -15,17 +16,22 @@ window.addEventListener ("load", myMain, false);
 var mergeBtn;
 var acceptBtn;
 let removeSourceBranch ;
+let removeSourceBranchBtn;
 function myMain () {
+  removeSourceBranchBtn = document.querySelector('#content-body > div.merge-request > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div > div > div.media-body > section > p.space-children > button');
   removeSourceBranch = document.querySelector('#remove-source-branch-input');
   mergeBtn = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span > button");
   let mergeSpan;
   mergeSpan = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span");
-  console.log('mergeBtn:',mergeBtn,' mergeSpan:',mergeSpan,' removeSourceBranch:',removeSourceBranch);
+  if(removeSourceBranchBtn){
+    removeSourceBranchBtn.click();
+  }
   if (mergeBtn && mergeSpan && removeSourceBranch){
     removeSourceBranch.checked = true;
 
     mergeBtn.innerHTML = "";
     mergeBtn.setAttribute("disabled", "disabled");
+    mergeBtn.style.visibility = "hidden";
     acceptBtn = document.createElement("Button");       // Create a <li> node
     acceptBtn.className = mergeBtn.className;
     var textnode = document.createTextNode("Accept");  // Create a text node
@@ -35,8 +41,39 @@ function myMain () {
     acceptBtn.appendChild(textnode);
     // document.insertBefore(acceptBtn, mergeBtn.childNodes[0]);  // Insert <li> before the first child of <ul>
     mergeSpan.appendChild(acceptBtn);
+    InitPassBtn();
+  }
+  
+}
 
-    
+function HandlePassClick(){
+  let curURL = document.URL;
+  let urlInfo = GitlabParseURLInfo(curURL);
+  console.log('dump gitlab is:',gitlab);
+  gitlab.QueryProjectMr(urlInfo.project,urlInfo.mr,(data)=>{
+    console.log('dump merge request data:',data);
+    let assigneeUsername = data.assignee && data.assignee.username;
+    console.log('assigneeUsername:',assigneeUsername);
+    if(assigneeUsername === 'product_commitee_bot' || assigneeUsername === "carlos_dev_trace_bot"){
+      gitlab.GitlabCommentMr(urlInfo.project,urlInfo.mr,"#pass @"+assigneeUsername,(data)=>{console.log('data is:',data);});
+      // gitlab.GitlabCommentissue(urlInfo.project,"67","hicarlos 123",(data)=>{console.log(data);});
+    }
+  });
+}
+
+function InitPassBtn(){
+  //
+  let commentDiv = document.querySelector('#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions');
+  let closeissueBtn = document.querySelector('#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions > button');
+  if(commentDiv && closeissueBtn){
+    let commentBtn = document.createElement("Button");       // Create a <li> node
+    commentBtn.className = closeissueBtn.className;
+    var textnode = document.createTextNode("Pass");  // Create a text node
+    commentBtn.appendChild(textnode);
+    commentBtn.addEventListener('click', function() {
+      HandlePassClick();
+    });
+    commentDiv.appendChild(commentBtn);
   }
 }
 
@@ -44,6 +81,7 @@ function GitlabParseURLInfo(url){
   let projectInfo = {};
   [projectInfo.groupname,projectInfo.projectname,projectInfo.type,projectInfo.mr] =  lodash.split(lodash.split(url,"http://www.lejuhub.com/")[1],'/');
   projectInfo.project = projectInfo.groupname + '/' + projectInfo.projectname;
+  projectInfo.mr = parseInt(projectInfo.mr);
   return projectInfo;
 }
 
@@ -98,6 +136,7 @@ function GitlabGetCurUrlAssign(curUrl,mrs){
 function AcceptMR(){
   acceptBtn.innerHTML = "Checking";
   acceptBtn.setAttribute("disabled", "disabled");
+
   let curURL = document.URL;
   let urlInfo = GitlabParseURLInfo(curURL);
   console.log('urlinfo is;',urlInfo);
