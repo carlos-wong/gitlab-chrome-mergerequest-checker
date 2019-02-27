@@ -18,29 +18,29 @@ var acceptBtn;
 let removeSourceBranch ;
 let removeSourceBranchBtn;
 function myMain () {
-  removeSourceBranchBtn = document.querySelector('#content-body > div.merge-request > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div > div > div.media-body > section > p.space-children > button');
-  removeSourceBranch = document.querySelector('#remove-source-branch-input');
-  mergeBtn = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span > button");
+  mergeBtn = document.querySelector('#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container.mr-widget-workflow > div.mr-widget-section.p-0 > div > div.mr-widget-body.media > div.media-body > div > span > button');
   let mergeSpan;
-  mergeSpan = document.querySelector("#content-body > div > div.merge-request-details.issuable-details > div.mr-state-widget.prepend-top-default > div.mr-section-container > div.mr-widget-section > div > div.media-body > div > span");
-  if(removeSourceBranchBtn){
-    removeSourceBranchBtn.click();
-  }
-  if (mergeBtn && mergeSpan && removeSourceBranch){
-    removeSourceBranch.checked = true;
-
+  mergeSpan = document.querySelector('#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions > button > span');
+  // if(removeSourceBranchBtn){
+  //   removeSourceBranchBtn.click();
+  //   setTimeout(()=>{
+  //       chrome.runtime.sendMessage({closeThis: true});
+  //     }, 1000);
+  // }
+  if(mergeBtn){
     mergeBtn.innerHTML = "";
     mergeBtn.setAttribute("disabled", "disabled");
     mergeBtn.style.visibility = "hidden";
-    acceptBtn = document.createElement("Button");       // Create a <li> node
-    acceptBtn.className = mergeBtn.className;
-    var textnode = document.createTextNode("Accept");  // Create a text node
-    acceptBtn.addEventListener('click', function() {
-      AcceptMR();
-    });
-    acceptBtn.appendChild(textnode);
-    // document.insertBefore(acceptBtn, mergeBtn.childNodes[0]);  // Insert <li> before the first child of <ul>
-    mergeSpan.appendChild(acceptBtn);
+  }
+  if (mergeSpan){
+    // acceptBtn = document.createElement("Button");       // Create a <li> node
+    // acceptBtn.className = mergeBtn.className;
+    // var textnode = document.createTextNode("Accept");  // Create a text node
+    // acceptBtn.addEventListener('click', function() {
+    //   AcceptMR();
+    // });
+    // acceptBtn.appendChild(textnode);
+    // mergeSpan.appendChild(acceptBtn);
     let curURL = document.URL;
     let urlInfo = GitlabParseURLInfo(curURL);
     gitlab.QueryProjectMr(urlInfo.project,urlInfo.mr,(data)=>{
@@ -58,8 +58,11 @@ function HandlePassClick(){
   let urlInfo = GitlabParseURLInfo(curURL);
   gitlab.QueryProjectMr(urlInfo.project,urlInfo.mr,(data)=>{
     let assigneeUsername = data.assignee && data.assignee.username;
-    if(assigneeUsername === 'product_commitee_bot' || assigneeUsername === "carlos_dev_trace_bot"){
+    if(assigneeUsername === 'product_commitee_bot'){
       gitlab.GitlabCommentMr(urlInfo.project,urlInfo.mr,"#pass @"+assigneeUsername,(data)=>{console.log('data is:',data);});
+    }
+    else if(assigneeUsername === "carlos_dev_trace_bot"){
+      gitlab.GitlabCommentMr(urlInfo.project,urlInfo.mr,"/label ~"+config.assign+"_planed\n#pass @"+assigneeUsername,(data)=>{console.log('data is:',data);});
     }
   });
 }
