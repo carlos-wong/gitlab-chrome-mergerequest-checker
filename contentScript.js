@@ -192,7 +192,10 @@ function AcceptMR(){
                 })
                 .then(()=>{
                   acceptBtn.innerHTML = 'Merged';
-                  window.location.reload();
+                  setTimeout(()=>{
+                    chrome.runtime.sendMessage({closeThis: true});
+                  }, 1000);
+                  // window.location.reload();
                 })
                 .catch((error)=>{
                   acceptBtn.innerHTML = error;
