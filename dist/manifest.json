@@ -6,7 +6,7 @@
   "background": { "scripts": ["hot-reload.js"] },
   "content_scripts": [
     {
-      "matches": ["https://www.lejuhub.com/*/*/merge_requests/*"],
+      "matches": ["https://www.lejuhub.com/*/*/merge_requests/*","https://www.lejuhub.com/*/*/-/merge_requests/*"],
       "run_at": "document_end",
       "js": ["main.js"],
       "all_frames": true,

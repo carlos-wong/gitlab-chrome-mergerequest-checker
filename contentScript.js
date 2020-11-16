@@ -32,7 +32,7 @@ function myMain () {
     mergeBtn.setAttribute("disabled", "disabled");
     mergeBtn.style.visibility = "hidden";
   }
-  if (mergeSpan){
+  if (true){
     // acceptBtn = document.createElement("Button");       // Create a <li> node
     // acceptBtn.className = mergeBtn.className;
     // var textnode = document.createTextNode("Accept");  // Create a text node
@@ -68,20 +68,20 @@ function HandlePassClick(){
 }
 
 function InitPassBtn(){
-    //
-    let commentDiv = document.querySelector('#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions');
-    let closeissueBtn = document.querySelector('#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions > button');
-    if(commentDiv && closeissueBtn){
-        let commentBtn = document.createElement("Button");       // Create a <li> node
-        commentBtn.className = closeissueBtn.className;
-        var textnode = document.createTextNode("Pass");  // Create a text node
-        commentBtn.appendChild(textnode);
-        commentBtn.style.marginLeft = "6px";
-        commentBtn.addEventListener('click', function() {
-            HandlePassClick();
-        });
-        commentDiv.appendChild(commentBtn);
-    }
+  //
+  let commentDiv = document.querySelector("#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions > div");
+  let closeissueBtn = document.querySelector("#notes > div > ul > li > div > div.timeline-content.timeline-content-form > form > div.note-form-actions > div > button.btn.btn-success.js-comment-button.js-comment-submit-button.qa-comment-button");
+  if(commentDiv && closeissueBtn){
+    let commentBtn = document.createElement("Button");       // Create a <li> node
+    commentBtn.className = closeissueBtn.className;
+    var textnode = document.createTextNode("Pass");  // Create a text node
+    commentBtn.appendChild(textnode);
+    commentBtn.style.marginLeft = "6px";
+    commentBtn.addEventListener('click', function() {
+      HandlePassClick();
+    });
+    commentDiv.appendChild(commentBtn);
+  }
 }
 
 function GitlabParseURLInfo(url){
